@@ -7,8 +7,9 @@ import org.springframework.context.ApplicationContext;
 @SpringBootApplication
 public class App {
     public static void main(String[] args) {
+        System.out.println("> Trước khi IoC Container được khởi tạo");
         ApplicationContext context = SpringApplication.run(App.class, args);
-
+        System.out.println("> Sau khi IoC Container được khởi tạo");
 
         Girl girl = context.getBean(Girl.class);
 
