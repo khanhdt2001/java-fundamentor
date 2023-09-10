@@ -49,7 +49,7 @@ Java keywords
 In Java, there are three types of variables:
 - Local Variables are a variable that are declared inside the body of a method. A local variable cannot be defined with "static" keyword.
 - Instance Variables are defined without the STATIC keyword .They are defined Outside a method declaration. They are Object specific and are known as instance variables.
-- Static Variables initialized only once, at the start of the program execution. These variables should be initialized first, before the initialization of any instance variables.
+- Static Variables initialized only once, at the start of the program execution. These variables should be initialized first, before the initialization of any instance variables. All instance of this class share this variable.
 ```
  class Sample {
     static int a = 1; //static variable  
