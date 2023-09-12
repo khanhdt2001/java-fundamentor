@@ -27,8 +27,11 @@ public class TodoService {
         .orElseGet(() -> todoRepository.findAll());
     }
 
-    public Todo getById(Integer todoId) {
-        
+    public Todo getById(Integer todoId) throws Exception{
+        Todo todo = todoRepository.finTodoById(todoId);
+        if (todo == null) {
+            throw new Exception("todo not found");
+        }
         return todoRepository.finTodoById(todoId);
         
     }
