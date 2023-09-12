@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  postgresql:
+    container_name: postgresql
+    image: postgres:14
+    volumes:
+      - ${POSTGRESQL_DATA}:/var/lib/postgresql/data
+    ports:
+      - ${DB_PORT}:5432
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    networks:
+      - backend
+networks:
+  backend:
+    driver: bridge
