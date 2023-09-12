@@ -41,9 +41,14 @@ public class TodoController {
     }
 
     @PostMapping("/todo")
-    public ResponseEntity<?> addTodo(@RequestBody Todo todo)  {
-        todoService.add(todo);
-        return ResponseEntity.ok().body(todo);
+    public ResponseEntity<?> addTodo(@RequestBody Todo todo) throws Exception {
+        try {
+            todoService.add(todo);
+            return ResponseEntity.ok().body(todo);
+        } catch (Exception e) {
+            throw e;
+        }
+        
     }
     
     

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.example.todoList.config.ErrorList;
 import com.example.todoList.model.Todo;
 import com.example.todoList.model.TodoValidator;
 import com.example.todoList.repository.TodoRepository;
@@ -30,17 +31,17 @@ public class TodoService {
     public Todo getById(Integer todoId) throws Exception{
         Todo todo = todoRepository.finTodoById(todoId);
         if (todo == null) {
-            throw new Exception("todo not found");
+            throw new Exception(ErrorList.RECORD_NOT_FOUND);
         }
         return todoRepository.finTodoById(todoId);
         
     }
 
-    public Todo add(Todo todo) {
+    public Todo add(Todo todo) throws Exception {
         if (validator.isValid(todo)) {
             return todoRepository.save(todo);
         }
-        return null;
+        throw new Exception(ErrorList.INVALID_REQUEST);
     }
 
     public void removeTodo(Long todoId) {

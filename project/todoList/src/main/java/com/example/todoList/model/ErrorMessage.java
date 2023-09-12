@@ -7,7 +7,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ErrorMessage {
+public class ErrorMessage   {
     private int statusCode;
+    private int devStatusCode;
     private String message;
 }
