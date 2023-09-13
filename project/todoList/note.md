@@ -19,3 +19,4 @@ User myCustomQuery(String emailAddress);
 @Query("SELECT u FROM User u WHERE u.status = :status and u.name = :name")
 User findUserByNamedParams(@Param("status") Integer status, @Param("name") String name);
 ```
+
