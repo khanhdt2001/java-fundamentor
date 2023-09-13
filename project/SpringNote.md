@@ -185,7 +185,7 @@ public class AppConfig {
 }
 ```
 
-
+## @Controller
 **Spring Boot** sẽ lắng nghe các request từ phía người dùng. và tùy theo đường dẫn path là gì, nó sẽ mapping tới hàm xử lý tương ứng trong ``@Controller``.
 
 Như ví dụ trên, tôi sử dụng GET vào địa chỉ ```localhost:8080/``` ( đường dẫn là /). **Spring Boot** sẽ gọi tới hàm có gắn ```@GetMapping("/")``` và yêu cầu hàm này xử lý request này.
@@ -213,4 +213,81 @@ User myCustomQuery(String emailAddress);
 <!-- method 2: using name assign -->
 @Query("SELECT u FROM User u WHERE u.status = :status and u.name = :name")
 User findUserByNamedParams(@Param("status") Integer status, @Param("name") String name);
+```
+
+## @ConfigurationProperties
+hơi giống  @Value nhưng mà nhìn thuận tiện hơn
+```
+@Data // Lombok
+@Component // Là 1 spring bean
+// @PropertySource("classpath:loda.yml") // Đánh dấu để lấy config từ trong file loda.yml
+@ConfigurationProperties(prefix = "loda") // Chỉ lấy các config có tiền tố là "loda"
+public class LodaAppProperties {
+    private String email;
+    private String googleAnalyticsId;
+
+    // standard getters and setters
+}
+
+
+@SpringBootApplication
+@EnableConfigurationProperties
+public class App {
+    public static void main(String[] args) {
+        SpringApplication.run(App.class, args);
+    }
+}
+
+<!-- file  -->
+loda:
+  email: khanhdtdz@gmail.com
+  googleAnalyticsId: U-xxxxx
+```
+
+
+# set up config
+
+set up config cho từng cấu hình riếng ví dự như môi trường dev và local, aws, ...
+ngoài ra còn có thể set up cho từng bean chỉ đượng chạy ở những môi trường cố định 
+
+```
+<!-- application-aws.yml -->
+server:
+  port: 9001
+
+spring:
+  datasource:
+    username: root
+    password: 123456
+    url: jdbc:postgresql://localhost:54321/todoList
+
+
+<!-- application.yml  -->
+---
+spring.config.activate.on-profile: local
+spring.config.activate.on-profile.include: local, common
+---
+spring.config.activate.on-profile: aws
+spring.config.activate.on-profile.include: aws, common
+---
+
+<!-- setup bean config -->
+
+@Component
+@Profile("local") // > this bean only run in env local
+public class LocalDatasourceConfig{}
+```
+
+Chọn config hay env có 2 cách đang chạy được trên repo này <br>
+1. set up trong file ```@SpringBootApplication```
+```
+    SpringApplication application = new SpringApplication(App.class);
+    ConfigurableEnvironment environment = new StandardEnvironment();
+    environment.setActiveProfiles("aws");
+    application.setEnvironment(environment);
+    ApplicationContext context = application.run(args);
+```
+2. set up trong file ```application.yml```
+```
+spring.profiles.active=aws
 ```

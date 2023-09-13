@@ -1,0 +1,10 @@
+# default profile
+spring.profiles.active=local
+---
+spring.config.activate.on-profile: local
+spring.config.activate.on-profile.include: local, common
+---
+spring.config.activate.on-profile: aws
+spring.config.activate.on-profile.include: aws, common
+---
+
