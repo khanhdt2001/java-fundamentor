@@ -291,3 +291,94 @@ Chọn config hay env có 2 cách đang chạy được trên repo này <br>
 ```
 spring.profiles.active=aws
 ```
+
+## @Conditional
+Bean chỉ được load lên hoặc khởi tạo theo một điều kiện nào đó. Ví dụ như tạo một Bean trong môi trường Test, còn môi trường thật sẽ không cần nữa.
+> **Spring Boot** hỗ trợ chúng ta làm điều này với Annotation ```@Conditional```.
+
+- ```@ConditionalOnBean``` sử dụng khi chúng ta muốn tạo ra một Bean, chỉ khi có một Bean khác đang tồn tại
+- ```@ConditionalOnProperty``` khi bạn muốn quyết định sự tồn tại Bean thông qua cấu hình property.
+    ```
+    @ConditionalOnProperty(
+                value="loda.bean2.enabled",
+                havingValue = "true", // Nếu giá trị loda.bean2.enabled  = true thì Bean mới được khởi tạo
+                matchIfMissing = false) // matchIFMissing là giá trị mặc định nếu không tìm thấy property loda.bean2.enabled
+        ABeanWithCondition2 aBeanWithCondition2(){
+            return new ABeanWithCondition2();
+        }
+    ```
+- ```@ConditionalOnExpression``` thỏa mãn điều kiện trọng property
+- ```@ConditionalOnMissingBean``` Nếu trong Context chưa tồn tại bất kỳ Bean nào tương tự, thì ```@ConditionalOnMissingBean``` sẽ thỏa mãn điều kiện và tạo ra một Bean như thế.
+- ```@ConditionalOnResource``` thỏa mãn khi có một resources nào đó do bạn chỉ định tồn tại
+- ```@ConditionalOnClass``` thỏa mãn khi trong classpath có tồn tại class mà bạn yêu cầu
+- ``` @ConditionalOnMissingClass ``` 
+- ``` @ConditionalOnJava ``` thỏa mãn nếu môi trường chạy version Java đúng với điều kiện
+
+Ngoài ra có thể tạo được **Custom conditional**
+
+```
+<!-- Cách 1 -->
+/*
+Một điều kiện, phải kế thừa lớp Condition của Spring Boot cung cấp
+ */
+public class WindowRequired implements Condition{
+
+    @Override
+    public boolean matches(ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
+        // Nếu OS ra window trả ra true.
+        return System.getProperty("os.name").toLowerCase().contains("win");
+    }
+}
+
+<!-- Cách 2 -->
+@Target({ ElementType.TYPE, ElementType.METHOD })
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+// Đánh dấu annotation này bởi @Conditional(WindowRequired.class)
+@Conditional(WindowRequired.class)
+public @interface ConditionalOnWindow {
+    /*
+    Trong trường hợp bạn muốn viết ngắn gọn,
+    hay tạo ra 1 Annotation mới và gắn @Conditional(WindowRequired.class)
+    trên nó
+
+    Như vậy khi cần sử dụng chỉ cần gọi @ConditionalOnWindow là được
+     */
+}
+
+
+<!-- Sử dụng của cách 1  -->
+@Configuration
+public class AppConfiguration {
+    public static class SomeBean{
+    }
+
+    /*
+    SomeBean chỉ được tạo ra khi
+    thỏa mãn điều kiện
+     */
+    @Conditional(WindowRequired.class)
+    @Bean
+    SomeBean someBean(){
+        return new SomeBean();
+    }
+}
+
+<!-- Sử dụng của cách 2 -->
+@Configuration
+public class AppConfiguration {
+    public static class SomeBean{
+    }
+
+    /*
+    SomeBean chỉ được tạo ra khi
+    thỏa mãn điều kiện
+     */
+    @ConditionalOnWindow
+    @Bean
+    SomeBean someBean(){
+        return new SomeBean();
+    }
+}
+```
+
