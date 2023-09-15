@@ -3,8 +3,12 @@ package com.example.todoList.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.todoList.event.TaskEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.todoList.config.ErrorList;
@@ -17,9 +21,10 @@ public class TodoService {
     
     @Autowired
     private TodoRepository todoRepository;
-
     @Autowired
     private TodoValidator validator;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
 
     public List<Todo> findAll(Integer limit) {
@@ -33,12 +38,13 @@ public class TodoService {
         if (todo == null) {
             throw new Exception(ErrorList.RECORD_NOT_FOUND);
         }
-        return todoRepository.finTodoById(todoId);
+        return todo;
         
     }
 
     public Todo add(Todo todo) throws Exception {
         if (validator.isValid(todo)) {
+            applicationEventPublisher.publishEvent(new TaskEvent(this, todo.getTitle()));
             return todoRepository.save(todo);
         }
         throw new Exception(ErrorList.INVALID_REQUEST);
@@ -51,4 +57,10 @@ public class TodoService {
             System.out.println(e);
         }
     }
+
+    public Page<Todo> getTotoCustom(Integer page, Integer pageSize) {
+        Page<Todo> response = todoRepository.findAll(PageRequest.of(page, pageSize));
+        return response;
+    }
+
 }

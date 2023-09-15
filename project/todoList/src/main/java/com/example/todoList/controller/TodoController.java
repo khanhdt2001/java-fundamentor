@@ -2,7 +2,11 @@ package com.example.todoList.controller;
 
 import java.util.List;
 
+import com.example.todoList.model.RequestPage;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -61,5 +65,11 @@ public class TodoController {
     @GetMapping("/test")
     public ResponseEntity<?> test(@RequestHeader HttpHeaders headers ) {
         return ResponseEntity.ok().body(headers);
+    }
+
+    @GetMapping("/test1")
+    public ResponseEntity<?> getCustomTodo(@RequestBody RequestPage request) {
+        Page<Todo> response = todoService.getTotoCustom(request.getPageNumber(), request.getPageSize());
+        return ResponseEntity.ok().body(response);
     }
 }

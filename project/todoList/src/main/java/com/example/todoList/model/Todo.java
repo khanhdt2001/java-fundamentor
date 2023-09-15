@@ -1,12 +1,10 @@
 package com.example.todoList.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 
-import lombok.Data;
+import lombok.*;
 
 @Entity
 @Table(name = "todos")
@@ -15,7 +13,14 @@ public class Todo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String title;
     private String detail;
+
+   @ManyToOne
+   @JoinColumn(name = "user_id", nullable = false)
+   @EqualsAndHashCode.Exclude
+   @ToString.Exclude
+   @JsonIgnoreProperties(value = {"todos"})
+   private User user;
+
 }
